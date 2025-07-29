@@ -32,7 +32,7 @@ export function ContestantCard({ contestant, userVotes }: ContestantCardProps) {
     const handleClick = () => {
         handleVote();
         userVotes.decreaseVotes(voteCount);
-        setVoteCount(0)
+        setVoteCount(1)
     };
 
 
@@ -64,7 +64,15 @@ export function ContestantCard({ contestant, userVotes }: ContestantCardProps) {
                         type="number"
                         min={1}
                         value={voteCount}
-                        onChange={(e) => setVoteCount(Number(e.target.value))}
+                        onChange={(e) => {
+                            setVoteCount(Number(e.target.value))
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Backspace' && voteCount === 1) {
+                                e.preventDefault();
+                                return;
+                            }
+                        }}
                         disabled={submitted}
                         className={cn(
                             'w-full',
