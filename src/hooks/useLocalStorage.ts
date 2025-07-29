@@ -22,7 +22,7 @@ export function useLocalStorage<T>(
         (value: T | ((prev: T) => T)) => {
             if (!isBrowser) return;
             try {
-                const newValue = value instanceof Function ? value(storedValue) : value;
+                const newValue = value instanceof Function ? value(JSON.parse(window.localStorage.getItem(key) ?? '{}')) : value;
                 window.localStorage.setItem(key, JSON.stringify(newValue));
                 setStoredValue(newValue);
             } catch (error) {

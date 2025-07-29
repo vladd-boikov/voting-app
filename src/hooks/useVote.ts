@@ -2,23 +2,24 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from '@/src/hooks/useLocalStorage';
 import { VoteData } from '@/src/types/voteData';
 import { toast } from 'sonner';
+import {LocalStorageEnum} from "@/src/enums/localStorageEnum";
 
 export function useVote(contestantId: string) {
-    const [votes, setVotes] = useLocalStorage<Record<string, VoteData>>('votes', {});
+    const [votes, setVotes] = useLocalStorage<Record<string, VoteData>>(LocalStorageEnum.VOTES, {});
     const existingVote = votes[contestantId];
     const submitted = existingVote?.submitted ?? false;
     const totalSubmittedVotes = existingVote?.count ?? 0;
 
-    const [voteCount, setVoteCount] = useState(1);
+    const [voteCount, setVoteCount] = useState(0);
 
     const safeUpdateVotes = useCallback(
         (updater: (prev: Record<string, VoteData>) => Record<string, VoteData>) => {
             setVotes((prevFromState) => {
                 try {
-                    const localVotes = JSON.parse(localStorage.getItem('votes') || '{}');
+                    const localVotes = JSON.parse(localStorage.getItem(LocalStorageEnum.VOTES) || '{}');
                     const merged = { ...localVotes, ...prevFromState };
                     const updated = updater(merged);
-                    localStorage.setItem('votes', JSON.stringify(updated));
+                    localStorage.setItem(LocalStorageEnum.VOTES, JSON.stringify(updated));
                     return updated;
                 } catch {
                     return updater(prevFromState);
@@ -54,7 +55,6 @@ export function useVote(contestantId: string) {
 
             safeUpdateVotes((prev) => {
                 const current = prev?.[contestantId] ?? { count: 0, submitted: false };
-
                 return {
                     ...prev,
                     [contestantId]: {

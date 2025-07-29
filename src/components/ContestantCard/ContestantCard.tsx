@@ -27,12 +27,12 @@ export function ContestantCard({ contestant, userVotes }: ContestantCardProps) {
     } = useVote(contestant.id);
 
     const isVoteDisabled =
-        submitted || voteCount <= 0 || voteCount > userVotes.votesRemaining;
+        isClient && (submitted || voteCount <= 0 || voteCount > userVotes.votesRemaining);
 
     const handleClick = () => {
         handleVote();
         userVotes.decreaseVotes(voteCount);
-        setVoteCount(1)
+        setVoteCount(0)
     };
 
 
@@ -61,17 +61,11 @@ export function ContestantCard({ contestant, userVotes }: ContestantCardProps) {
 
                 <div className='flex gap-2 items-center'>
                     <Input
-                        type="number"
-                        min={1}
+                        type="text"
                         value={voteCount}
                         onChange={(e) => {
+                            if (Number.isNaN(Number(e.target.value))) return
                             setVoteCount(Number(e.target.value))
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Backspace' && voteCount === 1) {
-                                e.preventDefault();
-                                return;
-                            }
                         }}
                         disabled={submitted}
                         className={cn(

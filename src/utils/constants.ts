@@ -58,5 +58,4 @@ export const contestants: Contestant[] = [
 ];
 
 
-export const STORAGE_KEY = 'votesRemaining';
 export const DEFAULT_VOTES = 10;
